@@ -202,10 +202,19 @@ func (self *fieldModel) GoTypeName() string {
 }
 
 func (self *fieldModel) GoTags() string {
+	var buf bytes.Buffer
+	buf.WriteString("`")
+	buf.WriteString(self.SPTag())
+	buf.WriteString(" ")
+	buf.WriteString(self.DBTag())
+	buf.WriteString("`")
+	return buf.String()
+}
 
+func (self *fieldModel) SPTag() string {
 	var b bytes.Buffer
 
-	b.WriteString("`sproto:\"")
+	b.WriteString("sproto:\"")
 
 	// 整形类型对解码层都视为整形
 	switch self.Type {
@@ -234,7 +243,26 @@ func (self *fieldModel) GoTags() string {
 
 	b.WriteString(fmt.Sprintf("name=%s", self.GoFieldName()))
 
-	b.WriteString("\"`")
+	b.WriteString("\"")
+
+	return b.String()
+}
+
+func (self *fieldModel) DBTag() string {
+	var b bytes.Buffer
+
+	b.WriteString("db:\"")
+
+	//b.WriteString(self.GoFieldName())
+	chars := []rune(self.GoFieldName())
+	for idx,ch := range chars {
+		if idx ==0 && (65 <= ch && ch <= 90) {
+			ch += 32
+		}
+		b.WriteRune(ch)
+	}
+
+	b.WriteString("\"")
 
 	return b.String()
 }
