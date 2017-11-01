@@ -207,6 +207,8 @@ func (self *fieldModel) GoTags() string {
 	buf.WriteString(self.SPTag())
 	buf.WriteString(" ")
 	buf.WriteString(self.DBTag())
+	buf.WriteString(" ")
+	buf.WriteString(self.JSONTag())
 	buf.WriteString("`")
 	return buf.String()
 }
@@ -252,6 +254,25 @@ func (self *fieldModel) DBTag() string {
 	var b bytes.Buffer
 
 	b.WriteString("db:\"")
+
+	//b.WriteString(self.GoFieldName())
+	chars := []rune(self.GoFieldName())
+	for idx,ch := range chars {
+		if idx ==0 && (65 <= ch && ch <= 90) {
+			ch += 32
+		}
+		b.WriteRune(ch)
+	}
+
+	b.WriteString("\"")
+
+	return b.String()
+}
+
+func (self *fieldModel) JSONTag() string {
+	var b bytes.Buffer
+
+	b.WriteString("json:\"")
 
 	//b.WriteString(self.GoFieldName())
 	chars := []rune(self.GoFieldName())
